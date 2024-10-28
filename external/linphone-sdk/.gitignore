@@ -1,0 +1,21 @@
+ekt-server
+tunnel
+**/.vscode
+**/.vs
+**/.idea
+**/*.nupkg
+cmake/Windows/**/obj
+cmake/Windows/**/bin
+cmake/Windows/wrapper/LinphoneWrapper.cs
+**/*.temp
+build*/*
+tester/Windows/**/x64
+tester/Windows/**/obj
+tester/Windows/**/bin
+tester/Windows/**/Generated*
+tester/Windows/LinphoneTester_uwp/packages
+CMakeUserPresets.json
+
+# Cache
+.cache
+.direnv

@@ -1,0 +1,22 @@
+macos-upload:
+  stage: deploy
+  tags: [ "macos-xcode13" ]
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $DEPLOY_MACOS != null
+  variables:
+    GIT_FETCH_EXTRA_FLAGS: --tags --force --recurse-submodules=yes
+    GIT_SUBMODULE_UPDATE_FLAGS: --jobs 8 --force --recursive
+  needs:
+    - macos-xcode
+
+  script:
+    - DESCRIBE=$(git -C liblinphone describe)
+    - echo $DESCRIBE
+    - !reference [.choose_upload_dir, script]
+    - rsync -rlv --ignore-existing build/mac/linphone-sdk-*.zip $DEPLOY_SERVER:$UPLOAD_ROOT_DIRECTORY/macosx/sdk
+    - pod repo remove linphone-sdk-macosx || true
+    - pod repo add linphone-sdk-macosx git@gitlab.linphone.org:BC/public/podspec-macos.git master
+    - pod repo push linphone-sdk-macosx build/mac/linphone-sdk.podspec --skip-import-validation --verbose --allow-warnings
+    - cd ~/.cocoapods/repos/linphone-sdk-macosx && git push origin master && cd -
+    - pod repo remove linphone-sdk-macosx
